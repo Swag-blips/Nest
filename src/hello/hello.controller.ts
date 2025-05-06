@@ -21,5 +21,5 @@ export class HelloController {
   getHelloWithQuery(@Query('name') name: string): string {
     return this.helloService.getHelloWithName(name || 'world');
   } 
-}
+} 
  
