@@ -10,6 +10,7 @@ export class HelloController {
   getHello(): string {
     return this.helloService.gethello();
   }
+  
 
   @Get('user/:name')
   getHelloWithName(@Param('name') name: string): string {
@@ -19,5 +20,6 @@ export class HelloController {
   @Get('query')
   getHelloWithQuery(@Query('name') name: string): string {
     return this.helloService.getHelloWithName(name || 'world');
-  }
+  } 
 }
+ 
