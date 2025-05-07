@@ -26,4 +26,14 @@ export class UserService {
     const user = this.getAllUsers().find((user) => user.id === id);
     return user;
   }
+
+  getWelcomeMessage(userId: number) {
+    const user = this.getUserById(userId);
+
+    if (!user) {
+      return 'User not found';
+    }
+
+    return this.helloService.getHelloWithName(user.name);
+  }
 }
