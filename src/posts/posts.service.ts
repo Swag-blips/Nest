@@ -26,4 +26,15 @@ export class PostsService {
 
     return singlePost;
   }
+
+  create(createPostData: Omit<Post, 'id' | 'createdAt'>): Post {
+    const newPost: Post = {
+      id: this.posts.length + 1,
+      ...createPostData,
+      createdAt: new Date(),
+    };
+
+
+    this.posts.push(newPost)
+  }
 }

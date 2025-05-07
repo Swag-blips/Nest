@@ -1,13 +1,13 @@
-import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import { Post } from './interface/post.interface';
+import { Post as PostInterface} from './interface/post.interface';
 
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get()
-  findAll(@Query('search') search?: string): Post[] {
+  findAll(@Query('search') search?: string): PostInterface[] {
     const extractAllPosts = this.postsService.findAll();
 
     if (search) {
@@ -20,7 +20,12 @@ export class PostsController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): Post {
+  findOne(@Param('id', ParseIntPipe) id: number): PostInterface {
     return this.postsService.findOne(id);
   }
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+
+  
 }
