@@ -17,7 +17,7 @@ export class PostsController {
     }
 
     return extractAllPosts;
-  }
+  } 
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): PostInterface {
