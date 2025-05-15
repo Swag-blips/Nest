@@ -9,8 +9,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
-import { createUserDto } from './dto/user.dto';
-import bcryptjs from 'bcrypt';
+import { createUserDto, loginUserDto } from './dto/user.dto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -27,16 +27,22 @@ export class AuthService {
     if (user) {
       throw new UnauthorizedException('User already exist');
     }
-    const hashedPassword = await bcryptjs.hash(userDto.password, 10);
-    await this.userModel.create({
+
+    this.logger.log('user dto password', userDto.password);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(userDto.password, salt);
+    this.logger.log('hashed password', hashedPassword);
+    const newUser = await this.userModel.create({
       bio: userDto.bio,
       username: userDto.username,
       email: userDto.email,
       password: hashedPassword,
     });
+
+    return { id: newUser.id, email: userDto.email };
   }
 
-  async loginUser(userDto: createUserDto) {
+  async loginUser(userDto: loginUserDto) {
     try {
       this.logger.log('login function hit');
       const { email, password } = userDto;
@@ -46,19 +52,24 @@ export class AuthService {
         throw new NotFoundException('User doesnt exist');
       }
 
-      const passwordMatch = await bcryptjs.compare(password, user.password);
+      const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) {
         throw new UnauthorizedException('Invalid login credentials');
       }
 
       const { _id: userId } = user;
 
-      const token = this.jwtService.sign(userId);
+      const token = this.jwtService.sign(
+        { userId },
+        {
+          secret: process.env.JWT_SECRET,
+        },
+      );
 
       return token;
     } catch (error) {
       this.logger.error(error);
-      throw new InternalServerErrorException("internal server error")
+      throw new InternalServerErrorException('internal server error');
     }
   }
 

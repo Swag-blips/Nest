@@ -12,3 +12,11 @@ export class createUserDto {
 
   bio: string;
 }
+
+export class loginUserDto {
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  password: string;
+}
