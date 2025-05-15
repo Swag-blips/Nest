@@ -11,7 +11,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI as string),
   ],
-  controllers: [],
+  controllers: [], 
   providers: [],
 })
-export class AppModule {}
+export class AppModule {} 
