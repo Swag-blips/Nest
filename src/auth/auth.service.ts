@@ -1,5 +1,6 @@
 import {
   Injectable,
+  InternalServerErrorException,
   Logger,
   NotFoundException,
   UnauthorizedException,
@@ -57,6 +58,7 @@ export class AuthService {
       return token;
     } catch (error) {
       this.logger.error(error);
+      throw new InternalServerErrorException("internal server error")
     }
   }
 
