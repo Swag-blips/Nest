@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
-import mongoose, { Model, mongo } from 'mongoose';
+import mongoose, { Model,} from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { createUserDto, loginUserDto } from './dto/user.dto';
 import * as bcrypt from 'bcryptjs';
@@ -69,7 +69,6 @@ export class AuthService {
   }
 
   async getMe(userId: mongoose.Types.ObjectId) {
-    this.logger.log('User id in service', userId);
     const user = await this.userModel
       .findById(userId)
       .select('-password')

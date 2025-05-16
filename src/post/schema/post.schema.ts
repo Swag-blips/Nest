@@ -1,17 +1,27 @@
-import { Prop, Schema } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 
 @Schema()
-export class postSchema {
+export class Post {
   @Prop({ required: true })
   title: string;
 
-  @Prop({ require: true })
+  @Prop({ required: true })
   body: string;
 
-  @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  })
   authorId: mongoose.Types.ObjectId;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }] })
+  @Prop({
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'Comment',
+    default: [],
+  })
   comments: mongoose.Types.ObjectId;
 }
+
+export type PostDocument = HydratedDocument<Post>;
+export const postSchema = SchemaFactory.createForClass(Post);
