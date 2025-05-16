@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
-import { Model } from 'mongoose';
+import mongoose, { Model, mongo } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { createUserDto, loginUserDto } from './dto/user.dto';
 import * as bcrypt from 'bcryptjs';
@@ -43,36 +43,46 @@ export class AuthService {
   }
 
   async loginUser(userDto: loginUserDto) {
-    try {
-      this.logger.log('login function hit');
-      const { email, password } = userDto;
+    this.logger.log('login function hit');
+    const { email, password } = userDto;
 
-      const user = await this.getUser(email);
-      if (!user) {
-        throw new NotFoundException('User doesnt exist');
-      }
-
-      const passwordMatch = await bcrypt.compare(password, user.password);
-      if (!passwordMatch) {
-        throw new UnauthorizedException('Invalid login credentials');
-      }
-
-      const { _id: userId } = user;
-
-      const token = this.jwtService.sign(
-        { userId },
-        {
-          secret: process.env.JWT_SECRET,
-        },
-      );
-
-      return token;
-    } catch (error) {
-      this.logger.error(error);
-      throw new InternalServerErrorException('internal server error');
+    const user = await this.getUser(email);
+    if (!user) {
+      throw new NotFoundException('User doesnt exist');
     }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      throw new UnauthorizedException('Invalid login credentials');
+    }
+
+    const { _id: userId } = user;
+
+    const token = this.jwtService.sign(
+      { userId },
+      {
+        secret: process.env.JWT_SECRET,
+      },
+    );
+
+    return token;
   }
 
+  async getMe(userId: mongoose.Types.ObjectId) {
+    this.logger.log('User id in service', userId);
+    const user = await this.userModel
+      .findById(userId)
+      .select('-password')
+      .lean();
+
+    this.logger.log('User', user);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
+  }
   private async getUser(email: string) {
     const user = await this.userModel.findOne({ email: email });
 
