@@ -1,3 +1,4 @@
+import { PartialType } from '@nestjs/mapped-types';
 import { IsString } from 'class-validator';
 
 export class createPostDto {
@@ -7,3 +8,5 @@ export class createPostDto {
   @IsString()
   body: string;
 }
+
+export class updatePostDto extends PartialType(createPostDto) {}
