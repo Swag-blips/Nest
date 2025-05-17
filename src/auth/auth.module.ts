@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { Mongoose } from 'mongoose';
@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { userSchema } from './schema/user.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthGuard } from './guard/auth.guard';
+import { PostModule } from 'src/post/post.module';
 
 @Module({
   imports: [

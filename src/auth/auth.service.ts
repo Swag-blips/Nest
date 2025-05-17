@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
-import mongoose, { Model,} from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { createUserDto, loginUserDto } from './dto/user.dto';
 import * as bcrypt from 'bcryptjs';
@@ -82,6 +82,8 @@ export class AuthService {
 
     return user;
   }
+
+ 
   private async getUser(email: string) {
     const user = await this.userModel.findOne({ email: email });
 

@@ -61,4 +61,11 @@ export class PostController {
     );
     return updatedPost;
   }
+  @UseGuards(AuthGuard)
+  @Get('user')
+  async getUserPosts(@Request() req) {
+    const userposts = this.postService.getUserPosts(req.userId);
+
+    return userposts;
+  }
 }

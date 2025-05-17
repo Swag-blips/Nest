@@ -110,6 +110,18 @@ export class PostService {
     return { success: true, message: 'Post successfuly updated' };
   }
 
+  async getUserPosts(authorId: mongoose.Types.ObjectId) {
+    const posts = await this.postModel.find({
+      authorId,
+    });
+
+    if (!posts.length) {
+      return { success: true, posts: [] };
+    }
+
+    return { success: true, posts };
+  }
+
   private async getPostById(postId: mongoose.Types.ObjectId) {
     if (!mongoose.Types.ObjectId.isValid(postId)) {
       throw new BadRequestException();

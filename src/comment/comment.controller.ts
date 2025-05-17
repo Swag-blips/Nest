@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Post,
   Request,
@@ -29,5 +30,13 @@ export class CommentController {
     );
 
     return comment;
+  }
+
+  @UseGuards(AuthGuard)
+  @Get()
+  async getCommentsByUser(@Request() req) {
+    const comments = this.commentService.getCommentsByUser(req.userId);
+
+    return comments;
   }
 }

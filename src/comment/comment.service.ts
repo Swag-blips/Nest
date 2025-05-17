@@ -39,4 +39,16 @@ export class CommentService {
     await post.save();
     return { success: true, comment };
   }
+
+  async getCommentsByUser(authorId: mongoose.Types.ObjectId) {
+    const comments = this.commentModel.find({
+      authorId,
+    });
+
+    if (!comments) {
+      return { success: true, comments: [] };
+    }
+
+    return { success: true, comments: comments };
+  }
 }
