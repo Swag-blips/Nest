@@ -39,7 +39,12 @@ export class AuthService {
       password: hashedPassword,
     });
 
-    return { id: newUser.id, email: userDto.email };
+    return {
+      success: true,
+      data: {
+        id: newUser._id,
+      },
+    };
   }
 
   async loginUser(userDto: loginUserDto) {
@@ -83,7 +88,6 @@ export class AuthService {
     return user;
   }
 
- 
   private async getUser(email: string) {
     const user = await this.userModel.findOne({ email: email });
 

@@ -14,11 +14,18 @@ import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { createPostDto, updatePostDto } from './dto/post.dto';
 import { PostService } from './post.service';
 import mongoose from 'mongoose';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('post')
 @Controller('post')
 export class PostController {
   private readonly logger = new Logger();
   constructor(private postService: PostService) {}
+
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 201,
+  })
   @UseGuards(AuthGuard)
   @Post()
   async createPost(@Body() postDto: createPostDto, @Request() req) {
@@ -32,6 +39,7 @@ export class PostController {
     return posts;
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get(':id')
   async getPostById(@Param('id') id: mongoose.Types.ObjectId) {
@@ -39,6 +47,7 @@ export class PostController {
     return post;
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Delete(':id')
   async deletePost(@Param('id') id: mongoose.Types.ObjectId, @Request() req) {
@@ -46,7 +55,7 @@ export class PostController {
 
     return post;
   }
-
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Patch(':id')
   async updatePost(
@@ -61,6 +70,7 @@ export class PostController {
     );
     return updatedPost;
   }
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get('user')
   async getUserPosts(@Request() req) {

@@ -35,7 +35,7 @@ export class CommentController {
   @UseGuards(AuthGuard)
   @Get()
   async getCommentsByUser(@Request() req) {
-    const comments = this.commentService.getCommentsByUser(req.userId);
+    const comments = await this.commentService.getCommentsByUser(req.userId);
 
     return comments;
   }

@@ -25,7 +25,7 @@ export class PostService {
         body,
       });
 
-      return post;
+      return { success: true, post };
     } catch (error) {
       throw error;
     }
