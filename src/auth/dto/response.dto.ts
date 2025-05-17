@@ -29,7 +29,7 @@ export class SignUpResponseDto extends ApiResponse<signUpResponse> {
 }
 
 export class LoginResponseDto extends ApiResponse<loginResponse> {
-  @ApiProperty({ type: () => loginResponse })
+  @ApiProperty({ type: () => loginResponse }) 
   declare data: loginResponse;
 }
 

@@ -1,98 +1,228 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🚀 Nest Blog API: Share Your Thoughts with the World! 🌍
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A powerful and flexible backend API built with NestJS for creating and managing blog posts and comments. Dive into a world of seamless content creation and interaction! ✨
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🛠️ Installation
 
-## Description
+Get the project up and running locally with these easy steps:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- ⬇️ **Clone the Repository**:
+  ```bash
+  git clone https://github.com/Swag-blips/Nest.git
+  ```
 
-## Project setup
+- 📦 **Install Dependencies**:
+  ```bash
+  npm install
+  ```
 
-```bash
-$ pnpm install
+- ⚙️ **Configure Environment Variables**:
+  - Create a `.env` file in the root directory.
+  - Add the following variables:
+    ```
+    MONGODB_URI=your_mongodb_connection_string
+    JWT_SECRET=your_jwt_secret_key
+    PORT=3000
+    ```
+
+- ▶️ **Run the Application**:
+  ```bash
+  npm run start:dev
+  ```
+
+## 📖 Usage
+
+### Register a new user
+Endpoint: `/auth/signup`
+```ts
+  @ApiCreatedResponse({ type: SignUpResponseDto })
+  @Post('signup')
+  async signup(@Body() userdto: createUserDto) {
+    const user = await this.authService.register(userdto);
+
+    return { success: true, user: user };
+  }
 ```
 
-## Compile and run the project
+### Login an existing user
+Endpoint: `/auth/login`
+```ts
+ @Post('login')
+  @ApiCreatedResponse({ type: LoginResponseDto })
+  async login(@Body() userDto: loginUserDto) {
+    const user = await this.authService.loginUser(userDto);
 
-```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+    return user;
+  }
 ```
 
-## Run tests
+### Get user's profile (me)
+Endpoint: `/auth/me`
+```ts
+@ApiBearerAuth()
+  @ApiCreatedResponse({ type: GetMeResponse })
+  @UseGuards(AuthGuard)
+  @Get('me')
+  async getMe(@Request() req) {
+    const user = await this.authService.getMe(req.userId);
 
-```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+    return user;
+  }
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+### Create a post
+Endpoint: `/post`
+```ts
+@ApiBearerAuth()
+  @ApiResponse({
+    status: 201,
+  })
+  @UseGuards(AuthGuard)
+  @Post()
+  async createPost(@Body() postDto: createPostDto, @Request() req) {
+    const post = await this.postService.createPost(postDto, req.userId);
+    return post;
+  }
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Get all the posts
+Endpoint: `/post`
+```ts
+@Get()
+  async getPosts() {
+    const posts = await this.postService.getPosts();
+    return posts;
+  }
+```
 
-## Resources
+### Get a post by id
+Endpoint: `/post/:id`
+```ts
+@ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Get(':id')
+  async getPostById(@Param('id') id: mongoose.Types.ObjectId) {
+    const post = await this.postService.getPostbyId(id);
+    return post;
+  }
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+### Delete a post
+Endpoint: `/post/:id`
+```ts
+@ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Delete(':id')
+  async deletePost(@Param('id') id: mongoose.Types.ObjectId, @Request() req) {
+    const post = await this.postService.deletePost(id, req.userId);
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+    return post;
+  }
+```
 
-## Support
+### Update a post
+Endpoint: `/post/:id`
+```ts
+@ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Patch(':id')
+  async updatePost(
+    @Body() updatePostDto: updatePostDto,
+    @Param('id') id: mongoose.Types.ObjectId,
+    @Request() req,
+  ) {
+    const updatedPost = await this.postService.editPost(
+      updatePostDto,
+      id,
+      req.userId,
+    );
+    return updatedPost;
+  }
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Get all posts of a user
+Endpoint: `/post/user`
+```ts
+@ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Get('user')
+  async getUserPosts(@Request() req) {
+    const userposts = this.postService.getUserPosts(req.userId);
 
-## Stay in touch
+    return userposts;
+  }
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Create a comment for a post
+Endpoint: `/comment/:id`
+```ts
+@UseGuards(AuthGuard)
+  @Post(':id')
+  async createComment(
+    @Param('id') id: mongoose.Types.ObjectId,
+    @Request() req,
+    @Body() createCommentDto: createCommentDto,
+  ) {
+    const comment = this.commentService.createComment(
+      createCommentDto,
+      id,
+      req.userId,
+    );
 
-## License
+    return comment;
+  }
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### Get all comments of a user
+Endpoint: `/comment`
+```ts
+@UseGuards(AuthGuard)
+  @Get()
+  async getCommentsByUser(@Request() req) {
+    const comments = await this.commentService.getCommentsByUser(req.userId);
+
+    return comments;
+  }
+```
+
+## ✨ Features
+
+- ✍️ **Create Posts**: Easily create and manage blog posts with titles and content.
+- 💬 **Comment System**: Engage with other users through a robust comment system.
+- 🔐 **Authentication**: Secure user authentication with JWT.
+- 🚀 **RESTful API**: Follows RESTful API principles for easy integration.
+- 🛡️ **Authorization**: Secures access to resources using role-based authorization.
+- 📝 **Validation**: Utilizes class-validator for robust data validation.
+- 📚 **Swagger Documentation**: Provides comprehensive API documentation using Swagger.
+
+## 💻 Technologies Used
+
+| Technology   | Link                               |
+| :----------- | :--------------------------------- |
+| TypeScript   | [TypeScript](https://www.typescriptlang.org/) |
+| NestJS       | [NestJS](https://nestjs.com/)       |
+| MongoDB      | [MongoDB](https://www.mongodb.com/) |
+| Mongoose     | [Mongoose](https://mongoosejs.com/) |
+| JWT          | [JWT](https://jwt.io/)             |
+| Swagger      | [Swagger](https://swagger.io/)       |
+| Bcrypt       | [Bcrypt](https://www.npmjs.com/package/bcryptjs) |
+
+## 🤝 Contributing
+
+Contributions are always welcome! Here's how you can contribute:
+
+- 🐛 **Report Bugs**: Help us squash those pesky bugs!
+- 💡 **Suggest Features**: Got a great idea? We're all ears!
+- ✍️ **Submit Pull Requests**: Contribute code and improve the project!
+
+## 📝 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+## 👨‍💻 Author Info
+
+- GitHub: [GitHub Profile](https://github.com/your-github-profile)
+- Twitter: [Twitter Profile](https://twitter.com/your-twitter-handle)
+- LinkedIn: [LinkedIn Profile](https://linkedin.com/in/your-linkedin-profile)
+
+[![Readme was generated by Dokugen](https://img.shields.io/badge/Readme%20was%20generated%20by-Dokugen-brightgreen)](https://www.npmjs.com/package/dokugen)
