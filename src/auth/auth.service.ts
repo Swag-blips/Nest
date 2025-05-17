@@ -37,7 +37,7 @@ export class AuthService {
       username: userDto.username,
       email: userDto.email,
       password: hashedPassword,
-    });
+    }); 
 
     return {
       success: true,
@@ -70,7 +70,12 @@ export class AuthService {
       },
     );
 
-    return token;
+    return {
+      success: true,
+      data: {
+        token,
+      },
+    };
   }
 
   async getMe(userId: mongoose.Types.ObjectId) {

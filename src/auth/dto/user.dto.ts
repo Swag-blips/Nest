@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
-import { ApiResponse } from './response.dto';
+import { IsEmail, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 
 export class createUserDto {
   @ApiProperty()
@@ -9,10 +8,12 @@ export class createUserDto {
 
   @ApiProperty()
   @IsEmail()
+  @MaxLength(356)
   email: string;
 
   @ApiProperty()
   @IsNotEmpty()
+  @MinLength(6)
   password: string;
 
   @ApiProperty()
@@ -22,15 +23,26 @@ export class createUserDto {
 export class loginUserDto {
   @ApiProperty()
   @IsEmail()
+  @MaxLength(356)
   email: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  @MinLength(10)
+  @MinLength(6)
   password: string;
 }
 
-export class signUpResponseDto extends ApiResponse<createUserDto> {
-  @ApiProperty({ type: () => createUserDto })
-  declare data: createUserDto;
+export class MeDto {
+  @ApiProperty()
+  email: string;
+
+  @ApiProperty()
+  username: string;
+
+  @ApiProperty()
+  bio: string;
+
+  @ApiProperty()
+  _id: string;
 }
+
