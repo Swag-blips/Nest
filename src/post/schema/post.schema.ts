@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 
-@Schema()
+@Schema({ timestamps: true })
 export class Post {
   @Prop({ required: true })
   title: string;
@@ -20,7 +20,7 @@ export class Post {
     ref: 'Comment',
     default: [],
   })
-  comments: mongoose.Types.ObjectId;
+  comments: Array<mongoose.Types.ObjectId>;
 }
 
 export type PostDocument = HydratedDocument<Post>;
